@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    config:
+      import-check:
+        enabled: false
+  application:
+    name: store-manager-signoz
+  config:
+    import: classpath:common.yaml

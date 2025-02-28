@@ -1,0 +1,167 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: default
+  namespace: default
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods  
+  - services
+  - endpoints
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: default
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: default
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: store-manager
+  name: store-manager
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: store-manager
+  template:
+    metadata:
+      labels:
+        app: store-manager
+        version: 1.0.0
+    spec:
+      containers:
+      - env:
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://my-release-signoz-otel-collector.platform:4318
+        - name: spring.datasource.username
+          valueFrom:
+            secretKeyRef:
+              key: spring_user
+              name: freedb-admin-secret
+        - name: spring.datasource.password
+          valueFrom:
+            secretKeyRef:
+              key: spring_pasword
+              name: freedb-admin-secret
+        - name: spring.datasource.url
+          value: jdbc:oracle:thin:@//freedb-sample:1521/FREEPDB1
+        - name: liquibase.datasource.username
+          valueFrom:
+            secretKeyRef:
+              key: liquibase_user
+              name: freedb-admin-secret
+        - name: liquibase.datasource.password
+          valueFrom:
+            secretKeyRef:
+              key: oracle_pwd
+              name: freedb-admin-secret
+        image: ghcr.io/lake-of-dreams/spring-oracledb-observability-signoz-store-manager:0.0.1-snapshot
+        imagePullPolicy: Always
+        name: store-maanger
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: store-manager
+  name: store-manager
+spec:
+  ports:
+  - name: spring
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: store-manager
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ratings-manager
+  name: ratings-manager
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ratings-manager
+  template:
+    metadata:
+      labels:
+        app: ratings-manager
+        version: 1.0.0
+    spec:
+      containers:
+      - env:
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://my-release-signoz-otel-collector.platform:4318
+        - name: spring.datasource.username
+          valueFrom:
+            secretKeyRef:
+              key: spring_user
+              name: freedb-admin-secret
+        - name: spring.datasource.password
+          valueFrom:
+            secretKeyRef:
+              key: spring_pasword
+              name: freedb-admin-secret
+        - name: spring.datasource.url
+          value: jdbc:oracle:thin:@//freedb-sample:1521/FREEPDB1
+        - name: liquibase.datasource.username
+          valueFrom:
+            secretKeyRef:
+              key: liquibase_user
+              name: freedb-admin-secret
+        - name: liquibase.datasource.password
+          valueFrom:
+            secretKeyRef:
+              key: oracle_pwd
+              name: freedb-admin-secret
+        image: ghcr.io/lake-of-dreams/spring-oracledb-observability-signoz-ratings-manager:0.0.1-snapshot
+        imagePullPolicy: Always
+        name: ratings-managerr
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ratings-manager
+  name: ratings-manager
+spec:
+  ports:
+  - name: spring
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: ratings-manager
+  sessionAffinity: None
+  type: ClusterIP
+

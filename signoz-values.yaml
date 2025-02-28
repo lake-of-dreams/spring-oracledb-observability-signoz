@@ -1,0 +1,3 @@
+clickhouse:
+  settings:
+    background_schedule_pool_size: 32

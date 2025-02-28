@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    config:
+      import-check:
+        enabled: false
+  application:
+    name: ratings-manager-signoz
+  config:
+    import: classpath:common.yaml

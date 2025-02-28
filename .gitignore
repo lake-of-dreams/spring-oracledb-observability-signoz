@@ -1,0 +1,8 @@
+.vscode
+retail-demo/store-manager/target
+retail-demo/store-manager/.DS_Store
+retail-demo/common/target
+retail-demo/common/.DS_Store
+retail-demo/ratings-manager/target
+retail-demo/ratings-manager/.DS_Store
+.DS_Store

@@ -1,0 +1,20 @@
+global:
+  cloud: others
+  clusterName: mycluster
+  deploymentEnvironment: test-environment
+otelCollectorEndpoint: http://my-release-signoz-otel-collector.platform:4317
+otelInsecure: true
+presets:
+  otlpExporter:
+    enabled: true
+  loggingExporter:
+    enabled: true
+hostMetrics:
+  collectionInterval: 60s
+  scrapers:
+    cpu:
+      metrics:
+        system.cpu.logical.count:
+          enabled: true
+        system.cpu.physical.count:
+          enabled: true
