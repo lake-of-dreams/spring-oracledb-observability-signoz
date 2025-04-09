@@ -26,7 +26,7 @@ kubectl create ns platform
 helm repo add signoz https://charts.signoz.io
 helm repo update
 
-helm --namespace platform install my-release signoz/signoz -f ./signoz-values.yaml
+helm --namespace platform install my-release signoz/signoz --version 0.73.0 -f ./signoz-values.yaml
 
 ```
 
